@@ -2,7 +2,7 @@ import { getConfig } from "./config";
 import { analyzeWeek, extractDeals, usedModels } from "./gemini";
 import { collectArticles } from "./sources";
 import { getJSON, setJSON, KEYS } from "./store";
-import type { Article, Brief, BriefStats, Deal, PulseConfig, RankedDeal, WatchlistHit } from "./types";
+import type { Analysis, Article, Brief, BriefStats, Deal, PulseConfig, RankedDeal, WatchlistHit } from "./types";
 
 const BATCH = 45;
 
@@ -116,6 +116,20 @@ function computeStats(deals: RankedDeal[], prev: BriefStats | null): BriefStats 
 }
 
 // investor (normalised) -> sector -> id of the brief where that pairing was first seen
+function fallbackAnalysis(deals: RankedDeal[], stats: BriefStats): Analysis {
+  const priority = deals.filter((d) => d.tier === "priority");
+  const top = stats.bySector.slice(0, 3).map((s) => `${s.sector} (${s.deals})`).join(", ");
+  return {
+    headline: `${stats.totalDeals} Indian startup rounds last week, ${priority.length} in your mandate`,
+    summary: `Most active sectors: ${top}. AI analysis was unavailable for this run because Gemini was overloaded, so the deals below are ranked by your mandate without commentary. Regenerate later for the full analysis.`,
+    patterns: [],
+    sectorMomentum: [],
+    investorMoves: [],
+    adjacencyAlerts: [],
+    actionItems: priority.slice(0, 3).map((d) => `Look at ${d.company} (${d.stage}, ${d.sector}).`),
+  };
+}
+
 type InvestorHistory = Record<string, Record<string, string>>;
 
 export async function generateBrief(): Promise<Brief> {
@@ -162,7 +176,13 @@ export async function generateBrief(): Promise<Brief> {
     usdM: d.amountUSDm, amount: d.amountText, lead: d.leadInvestors, others: d.otherInvestors.slice(0, 6),
     city: d.city, tier: d.tier, watchlist: d.watchlistMatch,
   }));
-  const analysis = await analyzeWeek({ cfg, deals: compactDeals, stats, watchlistHits: hits, newInvestors: newInvestors.slice(0, 30), hasHistory });
+  // If every Gemini model is busy for the analysis step, still publish the ranked
+  // deals with a basic summary instead of failing the whole Monday run.
+  const analysis = await analyzeWeek({ cfg, deals: compactDeals, stats, watchlistHits: hits, newInvestors: newInvestors.slice(0, 30), hasHistory })
+    .catch((err) => {
+      console.error("analyzeWeek failed, using fallback summary", err);
+      return fallbackAnalysis(ranked, stats);
+    });
 
   const brief: Brief = {
     id: briefId,

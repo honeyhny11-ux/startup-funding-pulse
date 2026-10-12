@@ -19,8 +19,8 @@ The mandate is editable at `/config`. See [COMPONENTS.md](COMPONENTS.md) for the
 | `ADMIN_KEY` | recommended | Password for saving config and for "Generate now". |
 | `CRON_SECRET` | recommended | Vercel sends it to `/api/cron` automatically. |
 | `RESEND_API_KEY` | for email | From https://resend.com. With the default sender `onboarding@resend.dev`, Resend only delivers to your own Resend account email. To email anyone else, verify a domain and set `EMAIL_FROM`. |
-| `GEMINI_MODEL` | no | Default `gemini-flash-latest`. |
-| `GEMINI_FALLBACK_MODELS` | no | Comma list. Default `gemini-3.6-flash,gemini-3.5-flash,gemini-3-flash-preview`. |
+| `GEMINI_MODEL` | no | Default `gemini-3.5-flash`. |
+| `GEMINI_FALLBACK_MODELS` | no | Comma list. Default `gemini-3.6-flash,gemini-3-flash-preview,gemini-flash-latest,gemini-3.7-flash,gemini-flash-lite-latest`. The last model that worked is tried first. |
 
 ## Run locally
 

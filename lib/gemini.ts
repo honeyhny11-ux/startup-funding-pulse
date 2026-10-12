@@ -1,13 +1,26 @@
 import { GoogleGenAI, ThinkingLevel, Type, type Schema } from "@google/genai";
 import { SECTORS, STAGES, type Analysis, type Article, type Deal, type PulseConfig } from "./types";
 
-// "gemini-flash-latest" always points at Google's current Flash model. If it is
-// overloaded (503) or rate-limited (429) we fall back to other Flash models.
-export const MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
-const MODELS = [...new Set([MODEL, ...(process.env.GEMINI_FALLBACK_MODELS || "gemini-3.6-flash,gemini-3.5-flash,gemini-3-flash-preview").split(",").map((s) => s.trim()).filter(Boolean)])];
+// Google's Flash models are often overloaded (503) or rate-limited (429) at
+// different times, so we try a chain of Flash models. Flash-Lite is last resort.
+export const MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+const MODELS = [
+  ...new Set(
+    [
+      MODEL,
+      ...(process.env.GEMINI_FALLBACK_MODELS ||
+        "gemini-3.6-flash,gemini-3-flash-preview,gemini-flash-latest,gemini-3.7-flash,gemini-flash-lite-latest"
+      ).split(","),
+    ].map((s) => s.trim()).filter(Boolean),
+  ),
+];
 
 // Models that actually produced output during this process (shown on the brief).
 export const usedModels = new Set<string>();
+
+// The last model that worked is tried first on the next call, so one overloaded
+// model doesn't cost every call a failed round-trip.
+let preferred: string | null = null;
 
 let _ai: GoogleGenAI | null = null;
 function ai() {
@@ -18,10 +31,12 @@ function ai() {
 
 async function generateJSON<T>(prompt: string, schema: Schema, opts: { fast?: boolean } = {}): Promise<T> {
   let lastErr: unknown;
-  // Up to 5 attempts across the model list; each call is capped so the whole run
-  // fits inside Vercel's 300s function limit.
-  for (let i = 0; i < Math.min(5, MODELS.length * 2); i++) {
-    const model = MODELS[i % MODELS.length];
+  const order = preferred ? [preferred, ...MODELS.filter((m) => m !== preferred)] : MODELS;
+  // Two passes over the chain, but stop after 110s so the whole run stays
+  // inside Vercel's 300s function limit.
+  const deadline = Date.now() + 110_000;
+  for (let i = 0; i < order.length * 2 && Date.now() < deadline; i++) {
+    const model = order[i % order.length];
     try {
       const res = await ai().models.generateContent({
         model,
@@ -30,19 +45,22 @@ async function generateJSON<T>(prompt: string, schema: Schema, opts: { fast?: bo
           responseMimeType: "application/json",
           responseSchema: schema,
           temperature: 0.2,
-          httpOptions: { timeout: 75_000 },
+          httpOptions: { timeout: 60_000 },
           // Extraction is mechanical; keep thinking low so it is fast.
           ...(opts.fast ? { thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } } : {}),
         },
       });
       const out = JSON.parse(res.text ?? "") as T;
       usedModels.add(model);
+      preferred = model;
       return out;
     } catch (err) {
       lastErr = err;
       console.warn(`Gemini ${model} failed: ${String(err).slice(0, 160)}`);
-      if (/API key|PERMISSION_DENIED|401|403/.test(String(err))) break;
-      await new Promise((r) => setTimeout(r, 1000 * (i + 1)));
+      if (/API key not valid|API_KEY_INVALID|PERMISSION_DENIED/.test(String(err))) break;
+      if (preferred === model) preferred = null;
+      // Switch model quickly; wait longer only once the whole chain has failed.
+      await new Promise((r) => setTimeout(r, i < order.length ? 400 : 3000));
     }
   }
   throw lastErr;
@@ -86,7 +104,7 @@ export async function extractDeals(articles: Article[], cfg: PulseConfig): Promi
 
 Return one entry per DISTINCT funding round that was ANNOUNCED in these articles, where the company raising money is an Indian startup (HQ or founders' main operations in India).
 Rules:
-- Include equity rounds, venture debt and bridge rounds. Exclude IPOs, share-price news, acquisitions without a raise, government grants, fund launches by VCs, accelerator programmes, and non-Indian companies.
+- Include equity rounds, venture debt and bridge rounds. Exclude IPOs, capital raises by already-listed companies (rights issues, QIPs, block deals, preferential allotments), share-price news, acquisitions without a raise, government grants, fund launches by VCs, accelerator programmes, and non-Indian companies.
 - "Funding wrap" / roundup articles may contain several deals: extract each one you can identify.
 - If several articles describe the same round, return ONE entry listing all their ids in articleIds.
 - Convert INR to USD at ₹88 = $1 (₹1 crore ≈ $0.114M). Use null when the amount is undisclosed.
