@@ -10,6 +10,8 @@ A Monday-morning brief on Indian startup funding for a venture scout. Every Mond
 
 The mandate is editable at `/config`. See [COMPONENTS.md](COMPONENTS.md) for the architecture.
 
+![Components Map](docs/components-map.png)
+
 ## Environment variables
 
 | Name | Required | Purpose |

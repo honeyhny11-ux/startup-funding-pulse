@@ -1,5 +1,10 @@
 # Components Map: Startup Funding Pulse
 
+![Components Map](docs/components-map.png)
+
+<details><summary>Mermaid source</summary>
+
+
 ```mermaid
 flowchart LR
   subgraph Trigger
@@ -50,6 +55,8 @@ flowchart LR
   A --> EM
   CFG <-->|/api/config · ADMIN_KEY| K1
 ```
+
+</details>
 
 | Component | File | Role |
 |---|---|---|

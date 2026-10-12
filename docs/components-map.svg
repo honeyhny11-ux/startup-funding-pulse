@@ -1,0 +1,198 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 920" width="1600" height="920" font-family="Segoe UI, Inter, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+    <marker id="arrP" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/>
+    </marker>
+    <style>
+      .grp { fill: #ffffff; stroke: #d6d3cc; stroke-width: 1.5; }
+      .glabel { font-size: 13px; font-weight: 700; letter-spacing: 1.4px; fill: #64748b; }
+      .t { font-size: 16px; font-weight: 700; fill: #0f172a; }
+      .s { font-size: 12.5px; fill: #475569; }
+      .src { fill: #eff6ff; stroke: #3b82f6; stroke-width: 1.5; }
+      .trg { fill: #f1f5f9; stroke: #64748b; stroke-width: 1.5; }
+      .step { fill: #ffffff; stroke: #94a3b8; stroke-width: 1.5; }
+      .ai { fill: #f3e8ff; stroke: #7c3aed; stroke-width: 2; }
+      .db { fill: #ecfdf5; stroke: #0f766e; stroke-width: 1.5; }
+      .out { fill: #fff7ed; stroke: #ea580c; stroke-width: 1.5; }
+      .user { fill: #0f172a; }
+      .a { fill: none; stroke: #475569; stroke-width: 2; marker-end: url(#arr); }
+      .a2 { fill: none; stroke: #475569; stroke-width: 2; marker-end: url(#arr); marker-start: url(#arr); }
+      .ad { fill: none; stroke: #7c3aed; stroke-width: 1.6; stroke-dasharray: 6 5; marker-end: url(#arrP); }
+      .lbl { font-size: 12px; font-weight: 600; fill: #334155; }
+      .badge { font-size: 11px; font-weight: 700; fill: #7c3aed; letter-spacing: .5px; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="920" fill="#f8f7f3"/>
+
+  <!-- Title -->
+  <text x="40" y="48" font-size="28" font-weight="800" fill="#0f172a">Startup Funding Pulse — Components Map</text>
+  <text x="40" y="74" font-size="14.5" fill="#64748b">Weekly AI funding brief for Indian startups · Next.js on Vercel · Gemini Flash · Upstash Redis · Resend</text>
+
+  <!-- ============ COLUMN A: Triggers + Sources ============ -->
+  <rect class="grp" x="40" y="100" width="300" height="190" rx="14"/>
+  <text class="glabel" x="60" y="127">TRIGGERS</text>
+  <rect class="trg" x="60" y="140" width="260" height="62" rx="10"/>
+  <text class="t" x="76" y="166">Vercel Cron</text>
+  <text class="s" x="76" y="187">Every Mon 06:00 IST · /api/cron</text>
+  <rect class="trg" x="60" y="212" width="260" height="62" rx="10"/>
+  <text class="t" x="76" y="238">“Generate now” button</text>
+  <text class="s" x="76" y="259">/api/generate · ADMIN_KEY</text>
+
+  <rect class="grp" x="40" y="320" width="300" height="400" rx="14"/>
+  <text class="glabel" x="60" y="347">LIVE DATA SOURCES (RSS)</text>
+  <rect class="src" x="60" y="362" width="260" height="56" rx="10"/>
+  <text class="t" x="76" y="386">Inc42 Buzz</text>
+  <text class="s" x="76" y="406">startup news feed</text>
+  <rect class="src" x="60" y="428" width="260" height="56" rx="10"/>
+  <text class="t" x="76" y="452">YourStory</text>
+  <text class="s" x="76" y="472">startup media feed</text>
+  <rect class="src" x="60" y="494" width="260" height="56" rx="10"/>
+  <text class="t" x="76" y="518">ET Tech Funding</text>
+  <text class="s" x="76" y="538">financial newswire</text>
+  <rect class="src" x="60" y="560" width="260" height="66" rx="10"/>
+  <text class="t" x="76" y="584">Google News × 5 queries</text>
+  <text class="s" x="76" y="604">Entrackr, Moneycontrol, VCCircle,</text>
+  <text class="s" x="76" y="619">press-release wires…</text>
+  <rect class="src" x="60" y="636" width="260" height="66" rx="10"/>
+  <text class="t" x="76" y="660">Per-sector Google News</text>
+  <text class="s" x="76" y="680">built from Aarav's focus sectors</text>
+  <text class="s" x="76" y="695">(up to 6 extra queries)</text>
+
+  <!-- ============ COLUMN B: Pipeline ============ -->
+  <rect class="grp" x="400" y="100" width="380" height="740" rx="14"/>
+  <text class="glabel" x="420" y="127">PIPELINE · lib/brief.ts</text>
+
+  <rect class="step" x="420" y="140" width="340" height="82" rx="10"/>
+  <text class="t" x="438" y="168">1 · Source Collector</text>
+  <text class="s" x="438" y="189">lib/sources.ts · last 7 days</text>
+  <text class="s" x="438" y="207">funding-keyword filter · dedupe headlines</text>
+
+  <rect class="ai" x="420" y="252" width="340" height="82" rx="10"/>
+  <text class="t" x="438" y="280">2 · Deal Extractor</text>
+  <text class="badge" x="640" y="280">✦ GEMINI FLASH</text>
+  <text class="s" x="438" y="301">headlines → structured JSON deals</text>
+  <text class="s" x="438" y="319">company · sector · stage · $ · investors</text>
+
+  <rect class="step" x="420" y="364" width="340" height="82" rx="10"/>
+  <text class="t" x="438" y="392">3 · Merge &amp; Dedupe</text>
+  <text class="s" x="438" y="413">same round reported by many sources</text>
+  <text class="s" x="438" y="431">→ one deal with all source links</text>
+
+  <rect class="step" x="420" y="476" width="340" height="82" rx="10"/>
+  <text class="t" x="438" y="504">4 · Mandate Ranker</text>
+  <text class="s" x="438" y="525">watchlist +100 · sector +40 · stage +30</text>
+  <text class="s" x="438" y="543">→ priority / partial / other tiers</text>
+
+  <rect class="step" x="420" y="588" width="340" height="82" rx="10"/>
+  <text class="t" x="438" y="616">5 · Stats &amp; Investor Memory</text>
+  <text class="s" x="438" y="637">week-over-week sector counts</text>
+  <text class="s" x="438" y="655">investors new to a sector</text>
+
+  <rect class="ai" x="420" y="700" width="340" height="120" rx="10"/>
+  <text class="t" x="438" y="728">6 · Analyst</text>
+  <text class="badge" x="640" y="728">✦ GEMINI FLASH</text>
+  <text class="s" x="438" y="750">headline + executive summary</text>
+  <text class="s" x="438" y="768">cross-deal patterns · sector momentum</text>
+  <text class="s" x="438" y="786">investor moves · adjacency alerts</text>
+  <text class="s" x="438" y="804">action items for the week</text>
+
+  <!-- pipeline arrows -->
+  <path class="a" d="M590 222 V250"/>
+  <path class="a" d="M590 334 V362"/>
+  <path class="a" d="M590 446 V474"/>
+  <path class="a" d="M590 558 V586"/>
+  <path class="a" d="M590 670 V698"/>
+
+  <!-- ============ COLUMN C: Storage + Gemini ============ -->
+  <rect class="grp" x="840" y="210" width="300" height="320" rx="14"/>
+  <text class="glabel" x="860" y="237">UPSTASH REDIS · lib/store.ts</text>
+  <rect class="db" x="860" y="252" width="260" height="58" rx="10"/>
+  <text class="t" x="876" y="277">pulse:config</text>
+  <text class="s" x="876" y="297">sectors · stages · watchlist · email</text>
+  <rect class="db" x="860" y="320" width="260" height="58" rx="10"/>
+  <text class="t" x="876" y="345">pulse:brief:*</text>
+  <text class="s" x="876" y="365">latest + dated weekly briefs</text>
+  <rect class="db" x="860" y="388" width="260" height="58" rx="10"/>
+  <text class="t" x="876" y="413">pulse:history</text>
+  <text class="s" x="876" y="433">archive index for comparisons</text>
+  <rect class="db" x="860" y="456" width="260" height="58" rx="10"/>
+  <text class="t" x="876" y="481">pulse:investors</text>
+  <text class="s" x="876" y="501">investor → sectors first seen</text>
+
+  <rect x="840" y="600" width="300" height="220" rx="14" fill="#faf5ff" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text class="glabel" x="860" y="627" fill="#7c3aed" style="fill:#7c3aed">GOOGLE GEMINI FLASH API</text>
+  <text class="s" x="860" y="652">lib/gemini.ts · used by steps 2 ✦ and 6 ✦</text>
+  <text class="s" x="860" y="677" font-weight="700" style="font-weight:700">Model fallback chain</text>
+  <text class="s" x="860" y="697">3.5-flash → 3.6-flash → 3-flash-preview</text>
+  <text class="s" x="860" y="715">→ flash-latest → 3.7-flash → flash-lite</text>
+  <text class="s" x="860" y="740">503 / 429 → switch model instantly</text>
+  <text class="s" x="860" y="758">sticky: reuses the model that worked</text>
+  <text class="s" x="860" y="776">60 s per call · fits Vercel's 300 s limit</text>
+  <text class="s" x="860" y="800">analysis fails → rule-based summary</text>
+
+  <!-- ============ COLUMN D: Delivery ============ -->
+  <rect class="grp" x="1200" y="100" width="360" height="380" rx="14"/>
+  <text class="glabel" x="1220" y="127">DELIVERY</text>
+  <rect class="out" x="1220" y="140" width="320" height="90" rx="10"/>
+  <text class="t" x="1238" y="168">Mandate Editor  /config</text>
+  <text class="s" x="1238" y="189">app/config/page.tsx · /api/config</text>
+  <text class="s" x="1238" y="207">Aarav edits sectors, stages, watchlist</text>
+  <rect class="out" x="1220" y="250" width="320" height="90" rx="10"/>
+  <text class="t" x="1238" y="278">Monday Email Brief</text>
+  <text class="s" x="1238" y="299">lib/email.ts · Resend API</text>
+  <text class="s" x="1238" y="317">alerts first · mandate deals · patterns</text>
+  <rect class="out" x="1220" y="360" width="320" height="90" rx="10"/>
+  <text class="t" x="1238" y="388">Web Dashboard  /</text>
+  <text class="s" x="1238" y="409">app/page.tsx · full brief, all deals</text>
+  <text class="s" x="1238" y="427">sector chart · archive of past weeks</text>
+
+  <!-- Aarav -->
+  <rect class="user" x="1200" y="600" width="360" height="130" rx="14"/>
+  <circle cx="1252" cy="648" r="18" fill="#f8f7f3"/>
+  <path d="M1222 700 a30 26 0 0 1 60 0 z" fill="#f8f7f3"/>
+  <text x="1300" y="645" font-size="18" font-weight="800" fill="#ffffff">Aarav</text>
+  <text x="1300" y="667" font-size="13" fill="#cbd5e1">Venture scout, Bengaluru family office</text>
+  <text x="1300" y="689" font-size="13" fill="#cbd5e1">Reads the brief before Monday starts;</text>
+  <text x="1300" y="707" font-size="13" fill="#cbd5e1">updates his mandate as it evolves</text>
+
+  <!-- ============ CROSS-COLUMN ARROWS (orthogonal) ============ -->
+  <path class="a" d="M340 172 H416"/>
+  <path class="a" d="M340 520 H368 Q380 520 380 508 V210 Q380 198 392 198 H416"/>
+  <text class="lbl" x="396" y="420" transform="rotate(-90 396 420)">~200 articles / week</text>
+
+  <!-- mandate: config -> collector -->
+  <path class="a" d="M858 281 H814 Q802 281 802 269 V198 Q802 186 790 186 H764"/>
+  <!-- stats <-> investor memory -->
+  <path class="a2" d="M764 622 H794 Q806 622 806 610 V497 Q806 485 818 485 H856"/>
+  <!-- history -> stats -->
+  <path class="a" d="M858 417 H829 Q817 417 817 429 V630 Q817 642 805 642 H764"/>
+  <!-- analyst -> brief store -->
+  <path class="a" d="M762 760 H816 Q828 760 828 748 V361 Q828 349 840 349 H856"/>
+
+  <!-- config <-> mandate editor -->
+  <path class="a2" d="M1122 281 H1148 Q1160 281 1160 269 V197 Q1160 185 1172 185 H1218"/>
+  <!-- brief -> email -->
+  <path class="a" d="M1122 340 H1163 Q1175 340 1175 328 V307 Q1175 295 1187 295 H1218"/>
+  <!-- brief -> dashboard -->
+  <path class="a" d="M1122 358 H1178 Q1190 358 1190 370 V393 Q1190 405 1202 405 H1218"/>
+
+  <!-- Aarav -->
+  <path class="a2" d="M1380 598 V452"/>
+  <rect x="767.0" y="221" width="70" height="20" rx="10" fill="#f8f7f3" stroke="#cbd5e1"/><text class="lbl" x="802" y="236" text-anchor="middle">mandate</text>
+  <rect x="1138.0" y="221" width="44" height="20" rx="10" fill="#f8f7f3" stroke="#cbd5e1"/><text class="lbl" x="1160" y="236" text-anchor="middle">save</text>
+  <rect x="1299.0" y="514" width="178" height="20" rx="10" fill="#f8f7f3" stroke="#cbd5e1"/><text class="lbl" x="1388" y="529" text-anchor="middle">reads brief · edits mandate</text>
+  <!-- Legend -->
+  <g transform="translate(40 862)">
+    <rect x="0" y="0" width="18" height="18" rx="4" class="src"/><text class="s" x="26" y="14">Live external data</text>
+    <rect x="170" y="0" width="18" height="18" rx="4" class="ai"/><text class="s" x="196" y="14">Gemini Flash AI step</text>
+    <rect x="350" y="0" width="18" height="18" rx="4" class="step"/><text class="s" x="376" y="14">Deterministic code</text>
+    <rect x="520" y="0" width="18" height="18" rx="4" class="db"/><text class="s" x="546" y="14">Persistent storage</text>
+    <rect x="690" y="0" width="18" height="18" rx="4" class="out"/><text class="s" x="716" y="14">Output / UI</text>
+    <rect x="830" y="0" width="18" height="18" rx="4" class="trg"/><text class="s" x="856" y="14">Trigger</text>
+    <text class="s" x="1220" y="14">github.com/honeyhny11-ux/startup-funding-pulse</text>
+  </g>
+</svg>
